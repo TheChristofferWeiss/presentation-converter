@@ -1,0 +1,17 @@
+# Runtime data — uploaded/converted user files. Never commit.
+data/
+
+# Virtualenv
+.venv/
+venv/
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+
+# macOS
+.DS_Store
+
+# Office lock files
+~$*

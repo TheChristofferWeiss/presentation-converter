@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OmniConvert - 1080p PDF, PNG, and PPT Converter</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+    <div class="glass-bg"></div>
+    <div class="glow-orb orb-1"></div>
+    <div class="glow-orb orb-2"></div>
+    
+    <div class="app-container">
+        <header>
+            <div class="logo">
+                <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <rect x="2" y="2" width="28" height="28" rx="8" fill="url(#logoGrad)" />
+                    <path d="M12 22V10L20 16L12 22Z" fill="white" />
+                    <defs>
+                        <linearGradient id="logoGrad" x1="2" y1="2" x2="30" y2="30" gradientUnits="userSpaceOnUse">
+                            <stop stop-color="#8B5CF6" />
+                            <stop offset="1" stop-color="#06B6D4" />
+                        </linearGradient>
+                    </defs>
+                </svg>
+                <h1>OmniConvert</h1>
+            </div>
+            <p class="subtitle">High-fidelity 1080p PDF, PNG, and PPT Converter</p>
+        </header>
+
+        <main>
+            <!-- Drag & Drop Zone -->
+            <section class="upload-section">
+                <div id="dropzone" class="dropzone">
+                    <input type="file" id="file-input" multiple accept=".pdf,.png,.jpg,.jpeg,.pptx,.ppt" class="file-input">
+                    <div class="dropzone-content">
+                        <div class="upload-icon">
+                            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                                <polyline points="17 8 12 3 7 8" />
+                                <line x1="12" y1="3" x2="12" y2="15" />
+                            </svg>
+                        </div>
+                        <h3>Drag & drop your files here</h3>
+                        <p class="upload-hint">Supports PDF, PNG, JPG, PPTX, and PPT files</p>
+                        <button type="button" class="btn btn-secondary select-files-btn">Browse Files</button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Workspace: queue and configuration -->
+            <section id="workspace" class="workspace hidden">
+                <div class="workspace-grid">
+                    <!-- File Queue List -->
+                    <div class="queue-card glass-panel">
+                        <div class="panel-header">
+                            <h2>Selected Files</h2>
+                            <span id="queue-count" class="badge">0 Files</span>
+                        </div>
+                        <div id="file-list" class="file-list">
+                            <!-- Dynamically populated files -->
+                        </div>
+                    </div>
+
+                    <!-- Conversion Options -->
+                    <div class="options-card glass-panel">
+                        <div class="panel-header">
+                            <h2>Settings</h2>
+                        </div>
+                        <div class="settings-form">
+                            <!-- Target Format -->
+                            <div class="form-group">
+                                <label for="target-format">Convert To</label>
+                                <div class="select-wrapper">
+                                    <select id="target-format" name="target-format">
+                                        <option value="pptx">PowerPoint Presentation (.pptx)</option>
+                                        <option value="pdf">PDF Document (.pdf)</option>
+                                        <option value="png">PNG Images (.png)</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <!-- Resolution Setting -->
+                            <div class="form-group">
+                                <label for="res-mode">Target Resolution</label>
+                                <div class="select-wrapper">
+                                    <select id="res-mode" name="res-mode">
+                                        <option value="height_1080" selected>1080p HD (1080px Height - Matches Widescreen)</option>
+                                        <option value="fit_16_9">1080p Canvas Widescreen (1920x1080 Letterbox)</option>
+                                        <option value="width_1920">1920px Width (Scale Proportional)</option>
+                                        <option value="original">Original Resolution</option>
+                                    </select>
+                                </div>
+                                <span class="help-text">PDF and Image outputs will scale to 1080p height or box width.</span>
+                            </div>
+
+                            <!-- Image Scale Mode -->
+                            <div class="form-group" id="scale-group">
+                                <label for="scale-mode">Image Scaling Mode</label>
+                                <div class="select-wrapper">
+                                    <select id="scale-mode" name="scale-mode">
+                                        <option value="fit" selected>Fit (Keep Aspect Ratio + Letterbox)</option>
+                                        <option value="stretch">Stretch to slide (May distort)</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <button id="convert-btn" class="btn btn-primary btn-glow btn-block">
+                                <span class="btn-text">Start Conversion</span>
+                                <div class="btn-spinner hidden"></div>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Results Section -->
+            <section id="results-section" class="results-section glass-panel hidden">
+                <div class="panel-header">
+                    <h2>Converted Output</h2>
+                    <button id="download-all-btn" class="btn btn-secondary btn-sm hidden">Download All as ZIP</button>
+                </div>
+                <div id="results-list" class="results-list">
+                    <!-- Dynamically populated converted items -->
+                </div>
+            </section>
+        </main>
+        
+        <footer>
+            <p>OmniConvert &copy; 2026. Made with Google Antigravity. PowerPoint conversions require local MS PowerPoint installation.</p>
+        </footer>
+    </div>
+    
+    <script src="/static/js/app.js"></script>
+</body>
+</html>
