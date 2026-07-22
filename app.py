@@ -134,11 +134,18 @@ def upload():
     for file in uploaded_files:
         if file.filename == '':
             continue
-            
-        filename = file.filename
-        dest_path = os.path.join(session_dir, filename)
+
+        # A folder selection sends each file's path relative to the folder
+        # (e.g. "myfolder/img.png"), so keep only the leaf name. Each file gets
+        # its own subdirectory so same-name files from different subfolders
+        # can't collide, while the on-disk leaf name stays the clean original
+        # -- that's what conversion output naming is derived from.
+        filename = os.path.basename(file.filename)
+        file_dir = os.path.join(session_dir, uuid.uuid4().hex[:8])
+        os.makedirs(file_dir, exist_ok=True)
+        dest_path = os.path.join(file_dir, filename)
         file.save(dest_path)
-        
+
         saved_files.append({
             'name': filename,
             'size': os.path.getsize(dest_path),

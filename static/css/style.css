@@ -214,6 +214,14 @@ header {
     font-size: 0.95rem;
 }
 
+.dropzone-actions {
+    display: flex;
+    gap: 12px;
+    pointer-events: auto;
+    position: relative;
+    z-index: 1;
+}
+
 /* Buttons */
 .btn {
     font-family: var(--font-family);

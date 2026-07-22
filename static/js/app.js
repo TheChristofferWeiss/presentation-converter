@@ -1,7 +1,9 @@
 document.addEventListener('DOMContentLoaded', () => {
     const dropzone = document.getElementById('dropzone');
     const fileInput = document.getElementById('file-input');
+    const folderInput = document.getElementById('folder-input');
     const selectFilesBtn = document.querySelector('.select-files-btn');
+    const selectFolderBtn = document.querySelector('.select-folder-btn');
     const workspace = document.getElementById('workspace');
     const fileList = document.getElementById('file-list');
     const queueCount = document.getElementById('queue-count');
@@ -47,26 +49,41 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    selectFilesBtn.addEventListener('click', () => {
+    selectFilesBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
         fileInput.click();
+    });
+
+    selectFolderBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        folderInput.click();
     });
 
     fileInput.addEventListener('change', () => {
         if (fileInput.files.length > 0) {
             handleSelectedFiles(fileInput.files);
         }
+        fileInput.value = '';
+    });
+
+    folderInput.addEventListener('change', () => {
+        if (folderInput.files.length > 0) {
+            handleSelectedFiles(folderInput.files);
+        }
+        folderInput.value = '';
     });
 
     // File handling
     function handleSelectedFiles(filesList) {
         const filesToUpload = [];
+        const skipped = [];
         for (let i = 0; i < filesList.length; i++) {
             const file = filesList[i];
             const ext = getExtension(file.name);
             const validExts = ['pdf', 'png', 'jpg', 'jpeg'];
 
             if (!validExts.includes(ext)) {
-                alert(`File "${file.name}" has an unsupported format. Please upload PDF, PNG, or JPG.`);
+                skipped.push(file.name);
                 continue;
             }
 
@@ -86,11 +103,17 @@ document.addEventListener('DOMContentLoaded', () => {
             filesToUpload.push({ file, id: fileId });
         }
 
+        if (skipped.length > 0) {
+            const shown = skipped.slice(0, 5).join(', ');
+            const more = skipped.length > 5 ? ` and ${skipped.length - 5} more` : '';
+            alert(`Skipped ${skipped.length} unsupported file(s): ${shown}${more}. Only PDF, PNG, and JPG are accepted.`);
+        }
+
         if (filesQueue.length > 0) {
             workspace.classList.remove('hidden');
             renderQueue();
             updateSettingsOptions();
-            
+
             // Upload each file
             filesToUpload.forEach(item => uploadFile(item.file, item.id));
         }
