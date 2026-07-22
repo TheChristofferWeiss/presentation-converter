@@ -371,9 +371,10 @@ document.addEventListener('DOMContentLoaded', () => {
                         renderQueue();
                     }
 
-                    // Remove task from running list and render result
+                    // Remove task from running list and render result.
+                    // Label with the converted file's own name, not the source file's.
                     conversionTasks = conversionTasks.filter(id => id !== taskId);
-                    addResultItem(taskId, labelName, true);
+                    addResultItem(taskId, data.result_name || labelName, true);
                     checkAllTasksComplete();
 
                 } else if (data.status === 'failed') {

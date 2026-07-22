@@ -25,6 +25,19 @@ tasks = {}
 def get_file_ext(filename):
     return os.path.splitext(filename)[1].lower()
 
+def result_download_name(task):
+    """The filename the user actually receives for a completed task.
+
+    Image-directory results are served as a ZIP, so the name gains a .zip suffix.
+    Used by both the status and download endpoints so the label the UI shows and
+    the file the browser saves can't drift apart.
+    """
+    result_path = task.get('result_file')
+    if not result_path:
+        return None
+    base_name = os.path.basename(result_path)
+    return f"{base_name}.zip" if task.get('is_dir') else base_name
+
 def cleanup_temp_files():
     """Cleans up uploaded and converted files older than 1 hour to prevent disk bloat."""
     now = time.time()
@@ -186,7 +199,7 @@ def get_task_status(task_id):
     task = tasks.get(task_id)
     if not task:
         return jsonify({'error': 'Task not found'}), 404
-    return jsonify(task)
+    return jsonify({**task, 'result_name': result_download_name(task)})
 
 @app.route('/api/download/<task_id>', methods=['GET'])
 def download(task_id):
@@ -206,11 +219,10 @@ def download(task_id):
         zip_path = result_path + ".zip"
         if not os.path.exists(zip_path):
             shutil.make_archive(result_path, 'zip', result_path)
-        return send_file(zip_path, as_attachment=True, download_name=f"{os.path.basename(result_path)}.zip")
+        return send_file(zip_path, as_attachment=True, download_name=result_download_name(task))
     else:
         # Serve the single file directly
-        filename = os.path.basename(result_path)
-        return send_file(result_path, as_attachment=True, download_name=filename)
+        return send_file(result_path, as_attachment=True, download_name=result_download_name(task))
 
 if __name__ == '__main__':
     app.run(debug=True, port=5000)
