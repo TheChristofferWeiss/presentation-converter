@@ -9,8 +9,6 @@ browser, pick a target format and resolution, download the result.
 |------|----|-----|
 | PDF | PNG | PyMuPDF page rendering |
 | PDF | PPTX | Pages rendered to PNG first, then placed on 16:9 slides |
-| PPTX | PDF | Microsoft PowerPoint via AppleScript |
-| PPTX | PNG | PowerPoint → PDF → PyMuPDF render |
 | PNG/JPG | PDF | Combined into one document |
 | PNG/JPG | PPTX | One image per slide |
 
@@ -25,16 +23,8 @@ canvas), and `original` (2× render for PDF sources).
 - Python 3.11+
 - Flask, PyMuPDF, python-pptx, Pillow — pinned in `requirements.txt`
 
-Four of the six conversions are pure Python and run on macOS, Windows, and Linux with
-nothing installed beyond those packages.
-
-The two that *start* from a PPTX are the exception. Rendering a slide needs a real
-layout and font engine, and no Python library provides one — so `PPTX → PDF` and
-`PPTX → PNG` drive Microsoft PowerPoint over AppleScript and require **macOS with
-PowerPoint installed**. They will not work on Windows, or on a Mac without PowerPoint.
-Routing that one function through LibreOffice headless instead
-(`soffice --headless --convert-to pdf`) would make every conversion cross-platform and
-remove the PowerPoint dependency.
+Everything is pure Python. No PowerPoint, no other local software — it runs anywhere
+Python does (macOS, Windows, Linux).
 
 ## Setup
 

@@ -102,20 +102,6 @@ def run_conversion_job(task_id, file_paths, target_format, res_mode):
                 else:
                     raise ValueError(f"Cannot convert PDF to format {target_format.upper()}.")
                     
-            elif ext in ('.pptx', '.ppt'):
-                if target_format == 'pdf':
-                    # PPTX -> PDF (uses AppleScript)
-                    out_pdf = os.path.join(task_out_dir, f"{base_name}.pdf")
-                    converters.pptx_to_pdf(src_file, out_pdf)
-                    tasks[task_id] = {'status': 'completed', 'progress': 100, 'result_file': out_pdf, 'is_dir': False, 'error': None}
-                elif target_format == 'png':
-                    # PPTX -> PNG (PDF intermediate then PNG render)
-                    out_png_dir = os.path.join(task_out_dir, f"{base_name}_slides")
-                    converters.pptx_to_png(src_file, out_png_dir, res_mode=res_mode, temp_dir=os.path.join(task_out_dir, "temp"))
-                    tasks[task_id] = {'status': 'completed', 'progress': 100, 'result_file': out_png_dir, 'is_dir': True, 'error': None}
-                else:
-                    raise ValueError(f"Cannot convert PPTX to format {target_format.upper()}.")
-                    
             elif ext in ('.png', '.jpg', '.jpeg'):
                 if target_format == 'pdf':
                     out_pdf = os.path.join(task_out_dir, f"{base_name}.pdf")

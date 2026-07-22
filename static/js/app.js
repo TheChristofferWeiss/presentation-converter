@@ -63,10 +63,10 @@ document.addEventListener('DOMContentLoaded', () => {
         for (let i = 0; i < filesList.length; i++) {
             const file = filesList[i];
             const ext = getExtension(file.name);
-            const validExts = ['pdf', 'png', 'jpg', 'jpeg', 'pptx', 'ppt'];
-            
+            const validExts = ['pdf', 'png', 'jpg', 'jpeg'];
+
             if (!validExts.includes(ext)) {
-                alert(`File "${file.name}" has an unsupported format. Please upload PDF, PNG, JPG, or PPT/PPTX.`);
+                alert(`File "${file.name}" has an unsupported format. Please upload PDF, PNG, or JPG.`);
                 continue;
             }
 
@@ -155,7 +155,6 @@ document.addEventListener('DOMContentLoaded', () => {
             let iconHtml = icons.unknown;
             if (['png', 'jpg', 'jpeg'].includes(file.type)) iconHtml = icons.png;
             else if (file.type === 'pdf') iconHtml = icons.pdf;
-            else if (['pptx', 'ppt'].includes(file.type)) iconHtml = icons.pptx;
 
             let statusBadge = '';
             if (file.status === 'uploading') {
@@ -222,12 +221,11 @@ document.addEventListener('DOMContentLoaded', () => {
         
         const isAllImages = filesQueue.every(f => ['png', 'jpg', 'jpeg'].includes(f.type));
         const isAllPdfs = filesQueue.every(f => f.type === 'pdf');
-        const isAllPpts = filesQueue.every(f => ['pptx', 'ppt'].includes(f.type));
-        
+
         // Save current selection to restore if possible
         const prevValue = targetFormatSelect.value;
         targetFormatSelect.innerHTML = '';
-        
+
         if (isAllImages) {
             targetFormatSelect.innerHTML = `
                 <option value="pdf" ${prevValue === 'pdf' ? 'selected' : ''}>PDF Document (.pdf)</option>
@@ -237,12 +235,6 @@ document.addEventListener('DOMContentLoaded', () => {
         } else if (isAllPdfs) {
             targetFormatSelect.innerHTML = `
                 <option value="pptx" ${prevValue === 'pptx' ? 'selected' : 'selected'}>PowerPoint Presentation (.pptx)</option>
-                <option value="png" ${prevValue === 'png' ? 'selected' : ''}>PNG Images (.png)</option>
-            `;
-            scaleGroup.classList.add('hidden');
-        } else if (isAllPpts) {
-            targetFormatSelect.innerHTML = `
-                <option value="pdf" ${prevValue === 'pdf' ? 'selected' : 'selected'}>PDF Document (.pdf)</option>
                 <option value="png" ${prevValue === 'png' ? 'selected' : ''}>PNG Images (.png)</option>
             `;
             scaleGroup.classList.add('hidden');

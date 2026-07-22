@@ -1,7 +1,6 @@
 import os
 import io
 import tempfile
-import subprocess
 from PIL import Image
 import fitz  # PyMuPDF
 from pptx import Presentation
@@ -223,78 +222,3 @@ def png_to_pptx(img_paths, output_pptx_path, res_mode="fit_16_9"):
         img.close()
         
     prs.save(output_pptx_path)
-
-def pptx_to_pdf(pptx_path, output_pdf_path):
-    """
-    Converts a PPTX presentation to PDF using Microsoft PowerPoint via AppleScript and macOS launch services.
-    Bypasses macOS App Sandbox file permission errors.
-    """
-    import time
-    abs_pptx = os.path.abspath(pptx_path)
-    abs_pdf = os.path.abspath(output_pdf_path)
-    
-    if os.path.exists(abs_pdf):
-        os.remove(abs_pdf)
-        
-    try:
-        # 1. Open PowerPoint file in background via launch services (resolves sandbox access automatically)
-        subprocess.run(['open', '-g', '-a', 'Microsoft PowerPoint', abs_pptx])
-        
-        # Wait up to 5 seconds for active presentation to load, polling every 0.5s
-        loaded = False
-        for _ in range(10):
-            # Check if there is an active presentation
-            check_script = 'tell application "Microsoft PowerPoint" to get name of active presentation'
-            res = subprocess.run(['osascript', '-e', check_script], stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
-            if res.returncode == 0:
-                loaded = True
-                break
-            time.sleep(0.5)
-            
-        if not loaded:
-            raise RuntimeError("Microsoft PowerPoint failed to open the presentation in a timely manner.")
-            
-        # 2. Save as PDF via AppleScript
-        save_script = f'tell application "Microsoft PowerPoint" to save active presentation in (POSIX file "{abs_pdf}") as save as PDF'
-        proc_save = subprocess.run(
-            ['osascript', '-e', save_script],
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
-            text=True
-        )
-        
-        if proc_save.returncode != 0:
-            raise RuntimeError(f"PowerPoint save-to-PDF failed: {proc_save.stderr or proc_save.stdout}")
-            
-    finally:
-        # 3. Close the presentation without saving changes
-        close_script = 'tell application "Microsoft PowerPoint" to close active presentation saving no'
-        subprocess.run(['osascript', '-e', close_script], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        
-    if not os.path.exists(abs_pdf):
-        raise RuntimeError("PowerPoint-to-PDF conversion finished, but the output PDF was not found.")
-        
-    return abs_pdf
-
-def pptx_to_png(pptx_path, output_dir, res_mode="height_1080", temp_dir=None):
-    """
-    Converts PPTX slides to PNG images by converting to PDF first, then rendering PDF to PNG.
-    """
-    if temp_dir is None:
-        temp_dir_obj = tempfile.TemporaryDirectory()
-        temp_dir = temp_dir_obj.name
-    else:
-        temp_dir_obj = None
-        
-    try:
-        temp_pdf_path = os.path.join(temp_dir, "temp_presentation.pdf")
-        
-        # 1. PPTX -> PDF via AppleScript
-        pptx_to_pdf(pptx_path, temp_pdf_path)
-        
-        # 2. PDF -> PNG via PyMuPDF
-        png_paths = pdf_to_png(temp_pdf_path, output_dir, res_mode=res_mode, scale_mode="fit")
-        return png_paths
-    finally:
-        if temp_dir_obj:
-            temp_dir_obj.cleanup()
