@@ -1,6 +1,6 @@
 # Presentation Converter
 
-A local Flask app for converting between PDF, PPTX, and PNG. Drop files in the
+A local Flask app for converting between PDF, PNG/JPG, and PPTX. Drop files in the
 browser, pick a target format and resolution, download the result.
 
 ## Conversions
