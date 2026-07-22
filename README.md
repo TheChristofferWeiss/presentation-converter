@@ -23,9 +23,18 @@ canvas), and `original` (2× render for PDF sources).
 ## Requirements
 
 - Python 3.11+
-- **macOS with Microsoft PowerPoint installed** — only needed for the two PPTX source
-  conversions, which drive PowerPoint through AppleScript. Everything starting from a
-  PDF or an image is pure Python and runs anywhere.
+- Flask, PyMuPDF, python-pptx, Pillow — pinned in `requirements.txt`
+
+Four of the six conversions are pure Python and run on macOS, Windows, and Linux with
+nothing installed beyond those packages.
+
+The two that *start* from a PPTX are the exception. Rendering a slide needs a real
+layout and font engine, and no Python library provides one — so `PPTX → PDF` and
+`PPTX → PNG` drive Microsoft PowerPoint over AppleScript and require **macOS with
+PowerPoint installed**. They will not work on Windows, or on a Mac without PowerPoint.
+Routing that one function through LibreOffice headless instead
+(`soffice --headless --convert-to pdf`) would make every conversion cross-platform and
+remove the PowerPoint dependency.
 
 ## Setup
 
@@ -47,7 +56,5 @@ Then open http://127.0.0.1:5000
 
 ## Scope
 
-This is built as a single-user tool on `127.0.0.1`. It is not hardened for exposure to a
-network: uploaded filenames are not sanitized, the convert endpoint accepts arbitrary
-filesystem paths from the client, and task state lives in a plain dict with no
-authentication. Fix those before binding it to anything but localhost.
+A single-user tool meant to run on `127.0.0.1`. There's no authentication and it isn't
+hardened for network exposure — keep it on localhost.
