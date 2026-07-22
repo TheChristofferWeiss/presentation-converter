@@ -132,54 +132,6 @@ def pdf_to_pptx(pdf_path, output_pptx_path, res_mode="fit_16_9", temp_dir=None):
         if temp_dir_obj:
             temp_dir_obj.cleanup()
 
-def png_to_pdf(img_paths, output_pdf_path, res_mode="height_1080"):
-    """
-    Converts a list of images into a single PDF document.
-    """
-    doc = fitz.open()
-    for img_path in img_paths:
-        img = Image.open(img_path)
-        w, h = img.size
-        
-        if res_mode == "height_1080":
-            target_h = 1080
-            target_w = int(w * (1080 / h))
-            resized_img = img.resize((target_w, target_h), Image.Resampling.LANCZOS)
-        elif res_mode == "width_1920":
-            target_w = 1920
-            target_h = int(h * (1920 / w))
-            resized_img = img.resize((target_w, target_h), Image.Resampling.LANCZOS)
-        elif res_mode == "fit_16_9":
-            target_w = 1920
-            target_h = 1080
-            resized_img = resize_and_pad(img, (1920, 1080))
-        elif res_mode == "original":
-            target_w = w
-            target_h = h
-            resized_img = img.copy()
-        else:
-            target_h = 1080
-            target_w = int(w * (1080 / h))
-            resized_img = img.resize((target_w, target_h), Image.Resampling.LANCZOS)
-            
-        img_byte_arr = io.BytesIO()
-        resized_img.save(img_byte_arr, format='PNG')
-        img_bytes = img_byte_arr.getvalue()
-        
-        # Create PDF page from raw PNG bytes
-        img_pdf_bytes = fitz.open("png", img_bytes).convert_to_pdf()
-        img_pdf = fitz.open("pdf", img_pdf_bytes)
-        
-        page = doc.new_page(width=target_w, height=target_h)
-        page.show_pdf_page(page.rect, img_pdf, 0)
-        
-        img.close()
-        resized_img.close()
-        img_pdf.close()
-        
-    doc.save(output_pdf_path)
-    doc.close()
-
 def png_to_pptx(img_paths, output_pptx_path, res_mode="fit_16_9"):
     """
     Converts list of images to a single 1080p PPTX presentation.

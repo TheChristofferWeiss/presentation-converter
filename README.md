@@ -9,11 +9,11 @@ browser, pick a target format and resolution, download the result.
 |------|----|-----|
 | PDF | PNG | PyMuPDF page rendering |
 | PDF | PPTX | Pages rendered to PNG first, then placed on 16:9 slides |
-| PNG/JPG | PDF | Combined into one document |
 | PNG/JPG | PPTX | One image per slide |
 
-Multiple images can be combined into a single PDF or deck. Other conversions take one
-file at a time.
+For PNG/JPG → PPTX, select multiple images at once — or every image in a folder — and
+they're combined into a single deck, one slide each. PDF conversions take one file at a
+time.
 
 Resolution modes: `height_1080`, `width_1920`, `fit_16_9` (letterboxed onto a 1920×1080
 canvas), and `original` (2× render for PDF sources).

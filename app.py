@@ -72,11 +72,7 @@ def run_conversion_job(task_id, file_paths, target_format, res_mode):
             if first_ext not in ('.png', '.jpg', '.jpeg'):
                 raise ValueError("Multiple files can only be combined if they are images (PNG, JPG).")
                 
-            if target_format == 'pdf':
-                out_pdf = os.path.join(task_out_dir, "combined_document.pdf")
-                converters.png_to_pdf(file_paths, out_pdf, res_mode=res_mode)
-                tasks[task_id] = {'status': 'completed', 'progress': 100, 'result_file': out_pdf, 'is_dir': False, 'error': None}
-            elif target_format == 'pptx':
+            if target_format == 'pptx':
                 out_pptx = os.path.join(task_out_dir, "combined_presentation.pptx")
                 converters.png_to_pptx(file_paths, out_pptx, res_mode=res_mode)
                 tasks[task_id] = {'status': 'completed', 'progress': 100, 'result_file': out_pptx, 'is_dir': False, 'error': None}
@@ -103,11 +99,7 @@ def run_conversion_job(task_id, file_paths, target_format, res_mode):
                     raise ValueError(f"Cannot convert PDF to format {target_format.upper()}.")
                     
             elif ext in ('.png', '.jpg', '.jpeg'):
-                if target_format == 'pdf':
-                    out_pdf = os.path.join(task_out_dir, f"{base_name}.pdf")
-                    converters.png_to_pdf([src_file], out_pdf, res_mode=res_mode)
-                    tasks[task_id] = {'status': 'completed', 'progress': 100, 'result_file': out_pdf, 'is_dir': False, 'error': None}
-                elif target_format == 'pptx':
+                if target_format == 'pptx':
                     out_pptx = os.path.join(task_out_dir, f"{base_name}.pptx")
                     converters.png_to_pptx([src_file], out_pptx, res_mode=res_mode)
                     tasks[task_id] = {'status': 'completed', 'progress': 100, 'result_file': out_pptx, 'is_dir': False, 'error': None}

@@ -228,8 +228,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (isAllImages) {
             targetFormatSelect.innerHTML = `
-                <option value="pdf" ${prevValue === 'pdf' ? 'selected' : ''}>PDF Document (.pdf)</option>
-                <option value="pptx" ${prevValue === 'pptx' ? 'selected' : 'selected'}>PowerPoint Presentation (.pptx)</option>
+                <option value="pptx" selected>PowerPoint Presentation (.pptx)</option>
             `;
             scaleGroup.classList.remove('hidden');
         } else if (isAllPdfs) {
@@ -240,9 +239,8 @@ document.addEventListener('DOMContentLoaded', () => {
             scaleGroup.classList.add('hidden');
         } else {
             targetFormatSelect.innerHTML = `
-                <option value="pdf">PDF Document (.pdf)</option>
-                <option value="png">PNG Images (.png)</option>
                 <option value="pptx">PowerPoint Presentation (.pptx)</option>
+                <option value="png">PNG Images (.png)</option>
             `;
             scaleGroup.classList.add('hidden');
         }
@@ -278,12 +276,12 @@ document.addEventListener('DOMContentLoaded', () => {
         resultsList.innerHTML = '';
         conversionTasks = [];
 
-        // Determine if we should compile images into a single file or convert individually
-        const isCompilingImages = ['pdf', 'pptx'].includes(targetFormat) && 
+        // Determine if we should compile images into a single deck or convert individually
+        const isCompilingImages = targetFormat === 'pptx' &&
                                   readyFiles.every(f => ['png', 'jpg', 'jpeg'].includes(f.type));
 
         if (isCompilingImages) {
-            // Compile ALL images into ONE presentation/document
+            // Compile ALL images into ONE presentation
             const filePaths = readyFiles.map(f => f.path);
             readyFiles.forEach(f => f.status = 'converting');
             renderQueue();
@@ -291,7 +289,7 @@ document.addEventListener('DOMContentLoaded', () => {
             startConversionTask(filePaths, targetFormat, resMode, scaleMode)
             .then(taskId => {
                 conversionTasks.push(taskId);
-                pollTaskStatus(taskId, 'Combined Document');
+                pollTaskStatus(taskId, 'Combined Presentation');
             })
             .catch(err => {
                 alert(`Conversion startup failed: ${err.message}`);
